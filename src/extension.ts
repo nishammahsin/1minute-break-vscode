@@ -156,24 +156,35 @@ function getReminderHtml(duration: number): string {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    padding: 0.5rem;
+                    padding: 1rem;
                     background-color: #f8f9fa;
                     border-radius: 8px;
                     transition: background-color 0.3s ease;
                     cursor: pointer;
+                    text-align: center;
                 }
                 .activity:hover {
                     background-color: #e9ecef;
                 }
                 .activity-icon {
-                    width: 30px;
-                    height: 30px;
-                    margin-bottom: 0.25rem;
+                    width: 40px;
+                    height: 40px;
+                    margin-bottom: 0.5rem;
+                }
+                .eye-icon {
+                    width: 40px;
+                    height: 40px;
                 }
                 .activity-label {
-                    font-size: 12px;
+                    font-size: 16px;
                     font-weight: 500;
-                    text-align: center;
+                    margin-bottom: 0.25rem;
+                }
+                .activity-instruction {
+                    font-size: 12px;
+                    color: #6c757d;
+                    margin-top: 0.25rem;
+                    line-height: 1.2;
                 }
                 .add-more {
                     display: block;
@@ -250,8 +261,8 @@ function getReminderHtml(duration: number): string {
                 }
                 
                 .eye-icon {
-                    width: 30px;
-                    height: 30px;
+                    width: 40px;
+                    height: 40px;
                 }
                 
                 .eye-outline {
@@ -332,23 +343,26 @@ function getReminderHtml(duration: number): string {
                 <p class="activity-instruction">Choose an activity to refresh yourself:</p>
                 <div class="activities">
                     <div class="activity">
-                        <svg class="eye-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                        <svg class="activity-icon eye-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                             <path class="eye-outline" d="M12 5.25C7.5 5.25 3.75 8.25 2.25 12C3.75 15.75 7.5 18.75 12 18.75C16.5 18.75 20.25 15.75 21.75 12C20.25 8.25 16.5 5.25 12 5.25Z" stroke-linecap="round" stroke-linejoin="round"/>
                             <circle class="eyeball" cx="12" cy="12" r="3" />
                         </svg>
                         <span class="activity-label">Blink</span>
+                        <p class="activity-instruction">Look at something 20 feet away for 20 seconds</p>
                     </div>
                     <div class="activity">
                         <svg class="activity-icon stretch-icon" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
                             <path d="M54.875 65.715l8.1211-0.80859c2.0547-0.20312 3.9805-1.0977 5.4609-2.5391l0.14844-0.14063c2.6406-2.5664 3.4844-6.4727 2.1328-9.9023-1.5625-3.9688-3.7344-9.4648-4.918-12.469-0.66406-1.6875-1.7891-3.1562-3.2422-4.2383l-16.223-12.074 5.6133-7.0508c2.1602-2.7148 1.7227-6.6641-0.98438-8.8398l-0.003906-0.003906c-1.3242-1.0625-3.0156-1.5508-4.6992-1.3516-1.6836 0.19531-3.2148 1.0586-4.2578 2.3945l-9.0234 11.602c-2.2227 2.8633-1.7461 6.9766 1.0781 9.25l8.4023 6.7578-10.484 17.852c-0.37109 0.63672-0.66406 1.3203-0.86328 2.0312-1.1094 3.9297-5.6602 20.105-8.2305 29.234-0.55859 1.9727-0.15625 4.0977 1.082 5.7344 1.2422 1.6367 3.1758 2.5977 5.2266 2.5977h0.007812c2.9531 0 5.5391-1.9766 6.3164-4.8242l5.3164-19.531 5.7773 19.457c0.82812 2.7969 3.3984 4.7148 6.3125 4.7148h0.52344c2.0312 0 3.9492-0.9375 5.1992-2.5391 1.2461-1.6055 1.6836-3.6914 1.1836-5.6602z"/>
                         </svg>
                         <span class="activity-label">Stretch</span>
+                        <p class="activity-instruction">Do some stretches for 30 seconds</p>
                     </div>
                     <div class="activity">
                         <svg class="activity-icon" width="24" height="24" viewBox="0 0 26.458 33.0725" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <path d="M14.079 1.323c-1.311 0-2.377 1.066-2.377 2.377 0 1.32 1.067 2.377 2.377 2.377 1.32 0 2.388-1.058 2.388-2.377 0-1.311-1.069-2.377-2.388-2.377zm-1.377 5.456c-2.029 0-4.293 1.424-5.303 3.048-.704 1.17-.769 2.494-.763 4.316-.006.52.415.945.936.944.52-.002.94-.429.93-.95-.005-1.761.097-2.685.496-3.348.305-.507.87-.998 1.933-1.62-.332 1.536-.637 3.075-.947 4.605 1.477 3.51 2.954 7.018 4.432 10.527.278.69 1.068 1.018 1.753.73.686-.289 1.002-1.083.704-1.764l-3.565-8.468.454-1.895.332-1.387c.953 1.73 3.165 2.199 4.68 2.558.505.127 1.016-.185 1.135-.691.12-.507-.199-1.013-.708-1.125-1.725-.409-2.6-.723-3.153-1.265-.289-.283-.57-.678-.788-1.286-.219-.608-.321-1.28-.515-1.88l-.002-.006v.001c-.407-1.05-1.141-1.044-2.052-1.047zm-3.009 8.386l-.904 4.48-2.067 3.456c-.39.633-.188 1.463.45 1.845.638.382 1.466.168 1.838-.476l2.25-3.76c.119-.2.184-.427.188-.66l.005-.704c-.587-1.394-1.173-2.788-1.76-4.181z" fill="#FF5722"/>
                         </svg>
                         <span class="activity-label">Walk</span>
+                        <p class="activity-instruction">Take a short 30-second walk</p>
                     </div>
                 </div>
                 <a href="#" class="add-more">+ Add More Activities</a>
