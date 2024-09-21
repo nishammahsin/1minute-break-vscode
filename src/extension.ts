@@ -365,7 +365,7 @@ function getReminderHtml(duration: number): string {
                         <p class="activity-instruction">Take a short 30-second walk</p>
                     </div>
                 </div>
-                <a href="#" class="add-more">+ Add More Activities</a>
+                <a href="#" class="add-more">+ Add More Activities and Custom Reminders</a>
                 <div class="water-tracker">
                     <h2>Stay Hydrated!</h2>
                     <div class="water-glasses">
