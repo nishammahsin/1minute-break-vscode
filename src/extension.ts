@@ -31,7 +31,9 @@ export function activate(context: vscode.ExtensionContext) {
 		const pauseDurationInSeconds = vscode.workspace.getConfiguration('blink-buddy').get('pauseDuration', 5);
 
 		blinkInterval = setInterval(() => {
-			showReminderModal(pauseDurationInSeconds);
+			if (!reminderPanel) {
+				showReminderModal(pauseDurationInSeconds);
+			}
 		}, intervalInSeconds * 1000);
 
 		vscode.window.showInformationMessage(`Blink Buddy started. Reminders every ${intervalInSeconds} seconds (testing mode).`);
@@ -66,8 +68,9 @@ function showReminderModal(duration: number) {
 
 	reminderPanel.webview.html = getReminderHtml(duration);
 
-	// Remove the automatic closing of the panel
-	// The panel will now stay open until the user closes it
+	reminderPanel.onDidDispose(() => {
+		reminderPanel = undefined;
+	});
 }
 
 function getReminderHtml(duration: number): string {
