@@ -340,7 +340,7 @@ function getReminderHtml(duration: number): string {
                         <div id="timer">0:00</div>
                     </div>
                 </div>
-                <p class="activity-instruction">Choose an activity to refresh yourself:</p>
+                <p class="activity-instruction">Complete all activities for a quick refresh:</p>
                 <div class="activities">
                     <div class="activity">
                         <svg class="activity-icon eye-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -367,11 +367,11 @@ function getReminderHtml(duration: number): string {
                 </div>
                 <a href="#" class="add-more">+ Add More Activities</a>
                 <div class="water-tracker">
-                    <h2>Daily Water Intake</h2>
+                    <h2>Stay Hydrated!</h2>
                     <div class="water-glasses">
-                        ${Array(10).fill(null).map((_, i) => `<div class="water-glass" data-index="${i}"></div>`).join('')}
+                        ${Array(8).fill(null).map((_, i) => `<div class="water-glass" data-index="${i}"></div>`).join('')}
                     </div>
-                    <p>Click a glass to mark it as drunk</p>
+                    <p>Tap a glass to log your water intake. Aim for 8 glasses a day!</p>
                 </div>
                 <p id="motivationalMessage">Stay hydrated, stay focused!</p>
                 <button class="back-to-work">Back to Work</button>
