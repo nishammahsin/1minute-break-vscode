@@ -294,44 +294,13 @@ function getReminderHtml(duration: number): string {
                     margin-top: 0.5rem;
                 }
                 .water-glass {
-                    width: 20px;
-                    height: 30px;
-                    background-color: #E3F2FD;
-                    border: 2px solid #2196F3;
-                    border-radius: 0 0 10px 10px;
+                    width: 30px;
+                    height: 40px;
                     cursor: pointer;
-                    transition: background-color 0.3s ease;
-                    position: relative;
-                    overflow: hidden;
+                    transition: fill 0.3s ease;
                 }
-                .water-glass::before {
-                    content: '';
-                    position: absolute;
-                    bottom: 0;
-                    left: 0;
-                    right: 0;
-                    height: 0;
-                    background-color: #2196F3;
-                    transition: height 0.3s ease;
-                    border-radius: 50% 50% 0 0 / 10px;
-                }
-                .water-glass.filled::before {
-                    height: 100%;
-                    border-radius: 0;
-                }
-                @keyframes wave {
-                    0%, 100% { transform: translateY(0); }
-                    50% { transform: translateY(-2px); }
-                }
-                .water-glass.filled::after {
-                    content: '';
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    right: 0;
-                    height: 4px;
-                    background-color: rgba(255, 255, 255, 0.3);
-                    animation: wave 2s infinite;
+                .water-glass.filled path {
+                    fill: #2196F3;
                 }
             </style>
         </head>
@@ -372,7 +341,16 @@ function getReminderHtml(duration: number): string {
                 <div class="water-tracker">
                     <h2>Stay Hydrated!</h2>
                     <div class="water-glasses">
-                        ${Array(8).fill(null).map((_, i) => `<div class="water-glass" data-index="${i}"></div>`).join('')}
+                        ${Array(8).fill(null).map((_, i) => `
+                            <svg class="water-glass" data-index="${i}" width="30" height="40" viewBox="0 0 64.002 64.002" xmlns="http://www.w3.org/2000/svg">
+                                <g transform="translate(10.878 4.295)">
+                                    <path d="M1.66,1.657,6.351,54.409H35.668L40.359,1.657H1.66M1.66-.6h38.7a2.254,2.254,0,0,1,2.248,2.452L37.916,54.609a2.255,2.255,0,0,1-2.248,2.054H6.351A2.255,2.255,0,0,1,4.1,54.609L-.587,1.856A2.254,2.254,0,0,1,1.66-.6Z" transform="translate(0.596 0.596)" fill="#000"/>
+                                </g>
+                                <g transform="translate(19.076 47.399)">
+                                    <path d="M.67,9.31a17.048,17.048,0,0,1,9.309-1.3c4.872.851,4.4,2.341,9.436,2.913a12.627,12.627,0,0,0,8.128-1.555l-.677,8.151H1.4Z" transform="translate(-0.67 -7.81)" fill="#000"/>
+                                </g>
+                            </svg>
+                        `).join('')}
                     </div>
                     <p>Tap a glass to log your water intake. Aim for 8 glasses a day!</p>
                 </div>
