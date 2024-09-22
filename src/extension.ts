@@ -18,30 +18,31 @@ export function activate(context: vscode.ExtensionContext) {
 	statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
 	context.subscriptions.push(statusBarItem);
 
-	const startBlinkReminder = vscode.commands.registerCommand('blink-buddy.startReminder', startReminder);
+	const startBlinkReminder = vscode.commands.registerCommand('blink-buddy.startReminder', () => {
+		if (blinkInterval) {
+			clearInterval(blinkInterval);
+		}
+
+		const config = vscode.workspace.getConfiguration('blinkBuddy');
+		const intervalInSeconds = config.get('reminderInterval', 5);
+		const pauseDurationInSeconds = config.get('pauseDuration', 5);
+
+		blinkInterval = setInterval(() => {
+			if (!reminderPanel) {
+				showReminderModal(pauseDurationInSeconds, context);
+			}
+		}, intervalInSeconds * 1000);
+
+		vscode.window.showInformationMessage(`Blink Buddy started. Reminders every ${intervalInSeconds} seconds (testing mode).`);
+	});
+
 	const stopBlinkReminder = vscode.commands.registerCommand('blink-buddy.stopReminder', stopReminder);
 	const openSettings = vscode.commands.registerCommand('blink-buddy.openSettings', () => showSettingsPanel(context));
 
 	context.subscriptions.push(startBlinkReminder, stopBlinkReminder, openSettings);
 }
 
-function startReminder() {
-    if (blinkInterval) {
-        clearInterval(blinkInterval);
-    }
 
-    const config = vscode.workspace.getConfiguration('blinkBuddy');
-    const intervalInSeconds = config.get('reminderInterval', 5); // Changed default to 5 seconds
-    const pauseDurationInSeconds = config.get('pauseDuration', 5);
-
-    blinkInterval = setInterval(() => {
-        if (!reminderPanel) {
-            showReminderModal(pauseDurationInSeconds);
-        }
-    }, intervalInSeconds * 1000); // Use seconds instead of minutes for testing
-
-    vscode.window.showInformationMessage(`Blink Buddy started. Reminders every ${intervalInSeconds} seconds (testing mode).`);
-}
 
 function stopReminder() {
 	if (blinkInterval) {
@@ -266,7 +267,7 @@ function getSettingsHtml(): string {
 
 
 
-function showReminderModal(duration: number) {
+function showReminderModal(duration: number, context: vscode.ExtensionContext) {
 	if (reminderPanel) {
 		reminderPanel.dispose();
 	}
@@ -282,6 +283,23 @@ function showReminderModal(duration: number) {
 	);
 
 	reminderPanel.webview.html = getReminderHtml(duration);
+
+	reminderPanel.webview.onDidReceiveMessage(
+		message => {
+			switch (message.command) {
+				case 'closeWebview':
+					if (reminderPanel) {
+						reminderPanel.dispose();
+					}
+					return;
+				case 'openSettings':
+					showSettingsPanel(context);
+					return;
+			}
+		},
+		undefined,
+		context.subscriptions
+	);
 
 	reminderPanel.onDidDispose(() => {
 		reminderPanel = undefined;
@@ -552,7 +570,7 @@ function getReminderHtml(duration: number): string {
                         <p class="activity-instruction">Take a short 30-second walk</p>
                     </div>
                 </div>
-                <a href="#" class="add-more">+ Add More Activities and Custom Reminders</a>
+                <a href="#" class="add-more" id="addMoreActivities">+ Add More Activities and Custom Reminders</a>
                 <div class="water-tracker">
                     <h2>Stay Hydrated!</h2>
                     <div class="water-glasses">
@@ -573,6 +591,7 @@ function getReminderHtml(duration: number): string {
                 <button class="back-to-work">Back to Work</button>
             </div>
             <script>
+                const vscode = acquireVsCodeApi();
                 let seconds = 0;
                 const timerElement = document.getElementById('timer');
 
@@ -603,6 +622,11 @@ function getReminderHtml(duration: number): string {
                 document.querySelector('.back-to-work').addEventListener('click', function() {
                     // Send a message to the extension to close the webview
                     vscode.postMessage({ command: 'closeWebview' });
+                });
+
+                document.getElementById('addMoreActivities').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    vscode.postMessage({ command: 'openSettings' });
                 });
             </script>
         </body>
