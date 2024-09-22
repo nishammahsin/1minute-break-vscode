@@ -1,56 +1,62 @@
-console.log('Blink Buddy extension is loading...');
-
 import * as vscode from 'vscode';
 
-console.log('Extension is activating');
-
-let blinkInterval: NodeJS.Timeout | undefined;
-let statusBarItem: vscode.StatusBarItem;
+let intervalId: NodeJS.Timeout | undefined;
 let reminderPanel: vscode.WebviewPanel | undefined;
-
-console.log('Blink Buddy extension is loading...');
-
-
+let statusBarItem: vscode.StatusBarItem;
 
 export function activate(context: vscode.ExtensionContext) {
-	console.log('Blink Buddy is now active!');
+    console.log('Blink Buddy is now active!');
 
-	statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-	context.subscriptions.push(statusBarItem);
+    statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+    context.subscriptions.push(statusBarItem);
 
-	const startBlinkReminder = vscode.commands.registerCommand('blink-buddy.startReminder', () => {
-		if (blinkInterval) {
-			clearInterval(blinkInterval);
-		}
+    const startBlinkReminder = vscode.commands.registerCommand('blink-buddy.startReminder', () => {
+        startExtension(context);
+    });
 
-		const config = vscode.workspace.getConfiguration('blinkBuddy');
-		const intervalInSeconds = config.get('reminderInterval', 5);
-		const pauseDurationInSeconds = config.get('pauseDuration', 5);
+    const stopBlinkReminder = vscode.commands.registerCommand('blink-buddy.stopReminder', stopExtension);
+    const openSettings = vscode.commands.registerCommand('blink-buddy.openSettings', () => showSettingsPanel(context));
 
-		blinkInterval = setInterval(() => {
-			if (!reminderPanel) {
-				showReminderModal(pauseDurationInSeconds, context);
-			}
-		}, intervalInSeconds * 1000);
+    context.subscriptions.push(startBlinkReminder, stopBlinkReminder, openSettings);
 
-		vscode.window.showInformationMessage(`Blink Buddy started. Reminders every ${intervalInSeconds} seconds (testing mode).`);
-	});
+    // Listen for configuration changes
+    context.subscriptions.push(vscode.workspace.onDidChangeConfiguration(event => {
+        if (event.affectsConfiguration('blinkBuddy')) {
+            console.log('BlinkBuddy configuration changed');
+            startExtension(context);
+        }
+    }));
 
-	const stopBlinkReminder = vscode.commands.registerCommand('blink-buddy.stopReminder', stopReminder);
-	const openSettings = vscode.commands.registerCommand('blink-buddy.openSettings', () => showSettingsPanel(context));
-
-	context.subscriptions.push(startBlinkReminder, stopBlinkReminder, openSettings);
+    // Start the extension with initial configuration
+    startExtension(context);
 }
 
+function startExtension(context: vscode.ExtensionContext): void {
+    stopExtension(); // Always stop the existing interval
 
+    const config = vscode.workspace.getConfiguration('blinkBuddy');
+    const intervalInSeconds = config.get<number>('reminderInterval', 1200);
+    const pauseDurationInSeconds = config.get<number>('pauseDuration', 20);
 
-function stopReminder() {
-	if (blinkInterval) {
-		clearInterval(blinkInterval);
-		blinkInterval = undefined;
-		statusBarItem.hide();
-		vscode.window.showInformationMessage('Blink Buddy stopped.');
-	}
+    console.log(`Starting extension with interval: ${intervalInSeconds}s, pause duration: ${pauseDurationInSeconds}s`);
+
+    intervalId = setInterval(() => {
+        console.log('Interval triggered');
+        if (!reminderPanel) {
+            showReminderModal(pauseDurationInSeconds, context);
+        }
+    }, intervalInSeconds * 1000);
+
+    vscode.window.showInformationMessage(`Blink Buddy: Started with interval ${intervalInSeconds}s and pause ${pauseDurationInSeconds}s.`);
+}
+
+function stopExtension(): void {
+    if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = undefined;
+        console.log('Extension stopped');
+        vscode.window.showInformationMessage('Blink Buddy: Stopped.');
+    }
 }
 
 function showSettingsPanel(context: vscode.ExtensionContext) {
@@ -104,8 +110,8 @@ function saveSettings(settings: any) {
 
 function getSettingsHtml(): string {
     const config = vscode.workspace.getConfiguration('blinkBuddy');
-    const reminderInterval = config.get('reminderInterval', 5);
-    const pauseDuration = config.get('pauseDuration', 5);
+    const reminderInterval = config.get('reminderInterval', 1200);
+    const pauseDuration = config.get('pauseDuration', 20);
     const customReminders = config.get('customReminders', []);
 
     return `
@@ -263,47 +269,53 @@ function getSettingsHtml(): string {
     `;
 }
 
-
-
-
-
 function showReminderModal(duration: number, context: vscode.ExtensionContext) {
-	if (reminderPanel) {
-		reminderPanel.dispose();
-	}
+    if (reminderPanel) {
+        reminderPanel.dispose();
+    }
 
-	reminderPanel = vscode.window.createWebviewPanel(
-		'blinkBuddyReminder',
-		'Blink Buddy Reminder',
-		vscode.ViewColumn.Two,
-		{
-			enableScripts: true,
-			retainContextWhenHidden: true
-		}
-	);
+    reminderPanel = vscode.window.createWebviewPanel(
+        'blinkBuddyReminder',
+        'Blink Buddy Reminder',
+        vscode.ViewColumn.Two,
+        {
+            enableScripts: true,
+            retainContextWhenHidden: true
+        }
+    );
 
-	reminderPanel.webview.html = getReminderHtml(duration);
+    reminderPanel.webview.html = getReminderHtml(duration);
 
-	reminderPanel.webview.onDidReceiveMessage(
-		message => {
-			switch (message.command) {
-				case 'closeWebview':
-					if (reminderPanel) {
-						reminderPanel.dispose();
-					}
-					return;
-				case 'openSettings':
-					showSettingsPanel(context);
-					return;
-			}
-		},
-		undefined,
-		context.subscriptions
-	);
+    reminderPanel.webview.onDidReceiveMessage(
+        message => {
+            switch (message.command) {
+                case 'closeWebview':
+                    if (reminderPanel) {
+                        reminderPanel.dispose();
+                    }
+                    return;
+                case 'openSettings':
+                    showSettingsPanel(context);
+                    return;
+            }
+        },
+        undefined,
+        context.subscriptions
+    );
 
-	reminderPanel.onDidDispose(() => {
-		reminderPanel = undefined;
-	});
+    reminderPanel.onDidDispose(() => {
+        reminderPanel = undefined;
+    });
+}
+
+
+
+export function deactivate() {
+    stopExtension();
+    statusBarItem.dispose();
+    if (reminderPanel) {
+        reminderPanel.dispose();
+    }
 }
 
 function getReminderHtml(duration: number): string {
@@ -634,12 +646,4 @@ function getReminderHtml(duration: number): string {
     `;
 }
 
-export function deactivate() {
-	if (blinkInterval) {
-		clearInterval(blinkInterval);
-	}
-	statusBarItem.dispose();
-	if (reminderPanel) {
-		reminderPanel.dispose();
-	}
-}
+
