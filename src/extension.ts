@@ -8,48 +8,263 @@ let blinkInterval: NodeJS.Timeout | undefined;
 let statusBarItem: vscode.StatusBarItem;
 let reminderPanel: vscode.WebviewPanel | undefined;
 
-export function activate(context: vscode.ExtensionContext) {
-	console.log('Blink Buddy is now active with 20-second interval!');
+console.log('Blink Buddy extension is loading...');
 
-	// Unregister existing commands if they exist
-	vscode.commands.getCommands(true).then((commands) => {
-		if (commands.includes('blink-buddy.startReminder')) {
-			vscode.commands.executeCommand('workbench.action.reloadWindow');
-		}
-	});
+
+
+export function activate(context: vscode.ExtensionContext) {
+	console.log('Blink Buddy is now active!');
 
 	statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
 	context.subscriptions.push(statusBarItem);
 
-	const startBlinkReminder = vscode.commands.registerCommand('blink-buddy.startReminder', () => {
-		if (blinkInterval) {
-			clearInterval(blinkInterval);
-		}
+	const startBlinkReminder = vscode.commands.registerCommand('blink-buddy.startReminder', startReminder);
+	const stopBlinkReminder = vscode.commands.registerCommand('blink-buddy.stopReminder', stopReminder);
+	const openSettings = vscode.commands.registerCommand('blink-buddy.openSettings', () => showSettingsPanel(context));
 
-		// Hardcoded 20 seconds interval for testing
-		const intervalInSeconds = 20;
-		const pauseDurationInSeconds = vscode.workspace.getConfiguration('blink-buddy').get('pauseDuration', 5);
-
-		blinkInterval = setInterval(() => {
-			if (!reminderPanel) {
-				showReminderModal(pauseDurationInSeconds);
-			}
-		}, intervalInSeconds * 1000);
-
-		vscode.window.showInformationMessage(`Blink Buddy started. Reminders every ${intervalInSeconds} seconds (testing mode).`);
-	});
-
-	const stopBlinkReminder = vscode.commands.registerCommand('blink-buddy.stopReminder', () => {
-		if (blinkInterval) {
-			clearInterval(blinkInterval);
-			blinkInterval = undefined;
-			statusBarItem.hide();
-			vscode.window.showInformationMessage('Blink Buddy stopped.');
-		}
-	});
-
-	context.subscriptions.push(startBlinkReminder, stopBlinkReminder);
+	context.subscriptions.push(startBlinkReminder, stopBlinkReminder, openSettings);
 }
+
+function startReminder() {
+    if (blinkInterval) {
+        clearInterval(blinkInterval);
+    }
+
+    const config = vscode.workspace.getConfiguration('blinkBuddy');
+    const intervalInSeconds = config.get('reminderInterval', 5); // Changed default to 5 seconds
+    const pauseDurationInSeconds = config.get('pauseDuration', 5);
+
+    blinkInterval = setInterval(() => {
+        if (!reminderPanel) {
+            showReminderModal(pauseDurationInSeconds);
+        }
+    }, intervalInSeconds * 1000); // Use seconds instead of minutes for testing
+
+    vscode.window.showInformationMessage(`Blink Buddy started. Reminders every ${intervalInSeconds} seconds (testing mode).`);
+}
+
+function stopReminder() {
+	if (blinkInterval) {
+		clearInterval(blinkInterval);
+		blinkInterval = undefined;
+		statusBarItem.hide();
+		vscode.window.showInformationMessage('Blink Buddy stopped.');
+	}
+}
+
+function showSettingsPanel(context: vscode.ExtensionContext) {
+    if (reminderPanel) {
+        reminderPanel.dispose();
+    }
+
+    reminderPanel = vscode.window.createWebviewPanel(
+        'blinkBuddySettings',
+        'Blink Buddy Settings',
+        vscode.ViewColumn.Two,
+        {
+            enableScripts: true,
+            retainContextWhenHidden: true
+        }
+    );
+
+    reminderPanel.webview.html = getSettingsHtml();
+
+    reminderPanel.webview.onDidReceiveMessage(
+        message => {
+            console.log('Received message:', message);
+            switch (message.command) {
+                case 'saveSettings':
+                    console.log('Saving settings:', message.settings);
+                    saveSettings(message.settings);
+                    vscode.window.showInformationMessage('Blink Buddy settings saved.');
+                    reminderPanel?.dispose();
+                    return;
+            }
+        },
+        undefined,
+        context.subscriptions
+    );
+
+    reminderPanel.onDidDispose(() => {
+        reminderPanel = undefined;
+    }, null, context.subscriptions);
+}
+
+function saveSettings(settings: any) {
+    console.log('Saving settings:', settings);
+    const config = vscode.workspace.getConfiguration('blinkBuddy');
+    config.update('reminderInterval', settings.reminderInterval, vscode.ConfigurationTarget.Global)
+        .then(() => console.log('Reminder interval updated'));
+    config.update('pauseDuration', settings.pauseDuration, vscode.ConfigurationTarget.Global)
+        .then(() => console.log('Pause duration updated'));
+    config.update('customReminders', settings.customReminders, vscode.ConfigurationTarget.Global)
+        .then(() => console.log('Custom reminders updated'));
+}
+
+function getSettingsHtml(): string {
+    const config = vscode.workspace.getConfiguration('blinkBuddy');
+    const reminderInterval = config.get('reminderInterval', 5);
+    const pauseDuration = config.get('pauseDuration', 5);
+    const customReminders = config.get('customReminders', []);
+
+    return `
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Blink Buddy Settings</title>
+            <style>
+                body, html {
+                    margin: 0;
+                    padding: 0;
+                    height: 100%;
+                    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
+                    background-color: #f5f5f5;
+                    color: #333;
+                    line-height: 1.6;
+                }
+                .settings {
+                    max-width: 400px;
+                    margin: 0 auto;
+                    padding: 1rem;
+                    background-color: white;
+                    border-radius: 12px;
+                    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                    display: flex;
+                    flex-direction: column;
+                    height: 100%;
+                    box-sizing: border-box;
+                    overflow-y: auto;
+                }
+                h1, h2 {
+                    font-size: 24px;
+                    font-weight: 600;
+                    color: #2c3e50;
+                    margin: 0.5rem 0;
+                    text-align: center;
+                }
+                h2 {
+                    font-size: 20px;
+                    margin-top: 1rem;
+                }
+                label {
+                    font-weight: 500;
+                    margin-top: 1rem;
+                    display: block;
+                }
+                input[type="number"], input[type="text"] {
+                    width: 100%;
+                    padding: 0.5rem;
+                    margin-top: 0.25rem;
+                    border: 1px solid #ddd;
+                    border-radius: 4px;
+                    box-sizing: border-box;
+                }
+                .custom-reminders {
+                    margin-top: 1rem;
+                }
+                .custom-reminder {
+                    display: flex;
+                    gap: 0.5rem;
+                    margin-bottom: 0.5rem;
+                }
+                .custom-reminder input {
+                    flex: 1;
+                }
+                button {
+                    background-color: #3498db;
+                    color: white;
+                    border: none;
+                    padding: 0.5rem 1rem;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    transition: background-color 0.3s ease;
+                    margin-top: 0.5rem;
+                }
+                button:hover {
+                    background-color: #2980b9;
+                }
+                .save-button {
+                    margin-top: 1rem;
+                    width: 100%;
+                }
+            </style>
+        </head>
+        <body>
+            <div class="settings">
+                <h1>Blink Buddy Settings</h1>
+                <label for="reminderInterval">Reminder Interval (seconds):</label>
+                <input type="number" id="reminderInterval" value="${reminderInterval}" min="1">
+                
+                <label for="pauseDuration">Break Duration (seconds):</label>
+                <input type="number" id="pauseDuration" value="${pauseDuration}" min="1">
+                
+                <div class="custom-reminders">
+                    <h2>Custom Reminders</h2>
+                    <div id="customRemindersList">
+                        ${customReminders.map((reminder: any, index: number) => `
+                            <div class="custom-reminder">
+                                <input type="text" class="reminderMessage" value="${reminder.message}" placeholder="Message">
+                                <input type="number" class="reminderInterval" value="${reminder.interval}" placeholder="Interval (sec)">
+                                <button onclick="removeReminder(${index})">Remove</button>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button onclick="addReminder()">Add Custom Reminder</button>
+                </div>
+                
+                <button class="save-button" onclick="saveSettings()">Save Settings</button>
+            </div>
+
+            <script>
+                const vscode = acquireVsCodeApi();
+
+                function addReminder() {
+                    const customRemindersList = document.getElementById('customRemindersList');
+                    const newReminder = document.createElement('div');
+                    newReminder.className = 'custom-reminder';
+                    newReminder.innerHTML = \`
+                        <input type="text" class="reminderMessage" placeholder="Message">
+                        <input type="number" class="reminderInterval" placeholder="Interval (sec)">
+                        <button onclick="this.parentElement.remove()">Remove</button>
+                    \`;
+                    customRemindersList.appendChild(newReminder);
+                }
+
+                function removeReminder(index) {
+                    const reminders = document.getElementById('customRemindersList').children;
+                    if (reminders[index]) {
+                        reminders[index].remove();
+                    }
+                }
+
+                function saveSettings() {
+                    const reminderInterval = document.getElementById('reminderInterval').value;
+                    const pauseDuration = document.getElementById('pauseDuration').value;
+                    const customReminders = Array.from(document.getElementById('customRemindersList').children).map(reminder => ({
+                        message: reminder.querySelector('.reminderMessage').value,
+                        interval: parseInt(reminder.querySelector('.reminderInterval').value)
+                    }));
+
+                    vscode.postMessage({
+                        command: 'saveSettings',
+                        settings: {
+                            reminderInterval: parseInt(reminderInterval),
+                            pauseDuration: parseInt(pauseDuration),
+                            customReminders
+                        }
+                    });
+                }
+            </script>
+        </body>
+        </html>
+    `;
+}
+
+
+
+
 
 function showReminderModal(duration: number) {
 	if (reminderPanel) {

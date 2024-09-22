@@ -22,16 +22,44 @@
       {
         "command": "blink-buddy.stopReminder",
         "title": "Stop Blink Buddy"
+      },
+      {
+        "command": "blink-buddy.openSettings",
+        "title": "Open Blink Buddy Settings"
       }
     ],
-    "views": {
-      "webview": [
-        {
-          "type": "webview",
-          "id": "blinkBuddyReminder",
-          "name": "Blink Buddy Reminder"
+    "configuration": {
+      "title": "Blink Buddy",
+      "properties": {
+        "blinkBuddy.reminderInterval": {
+          "type": "number",
+          "default": 5,
+          "description": "Interval between reminders in seconds (for testing)"
+        },
+        "blinkBuddy.pauseDuration": {
+          "type": "number",
+          "default": 5,
+          "description": "Duration of break in seconds"
+        },
+        "blinkBuddy.customReminders": {
+          "type": "array",
+          "default": [],
+          "description": "Custom reminders",
+          "items": {
+            "type": "object",
+            "properties": {
+              "message": {
+                "type": "string",
+                "description": "Reminder message"
+              },
+              "interval": {
+                "type": "number",
+                "description": "Interval in seconds"
+              }
+            }
+          }
         }
-      ]
+      }
     }
   },
   "scripts": {
