@@ -5,7 +5,7 @@ let reminderPanel: vscode.WebviewPanel | undefined;
 let statusBarItem: vscode.StatusBarItem;
 
 export function activate(context: vscode.ExtensionContext) {
-    console.log('Blink Buddy is now active!');
+    console.log('1Minute Break is now active!');
 
     statusBarItem = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
     context.subscriptions.push(statusBarItem);
@@ -46,7 +46,7 @@ function startExtension(context: vscode.ExtensionContext): void {
         }
     }, intervalInSeconds * 1000);
 
-    vscode.window.showInformationMessage(`Blink Buddy: Started with interval ${intervalInSeconds}s.`);
+    vscode.window.showInformationMessage(`1Minute Break: Started with interval ${intervalInSeconds}s.`);
 }
 
 function stopExtension(): void {
@@ -54,7 +54,7 @@ function stopExtension(): void {
         clearInterval(intervalId);
         intervalId = undefined;
         console.log('Extension stopped');
-        vscode.window.showInformationMessage('Blink Buddy: Stopped.');
+        vscode.window.showInformationMessage('1Minute Break: Stopped.');
     }
 }
 
@@ -65,7 +65,7 @@ function showSettingsPanel(context: vscode.ExtensionContext) {
 
     reminderPanel = vscode.window.createWebviewPanel(
         'blinkBuddySettings',
-        'Blink Buddy Settings',
+        '1Minute Break Settings',
         vscode.ViewColumn.Two,
         {
             enableScripts: true,
@@ -82,7 +82,7 @@ function showSettingsPanel(context: vscode.ExtensionContext) {
                 case 'saveSettings':
                     console.log('Saving settings:', message.settings);
                     saveSettings(message.settings);
-                    vscode.window.showInformationMessage('Blink Buddy settings saved.');
+                    vscode.window.showInformationMessage('1Minute Break settings saved.');
                     reminderPanel?.dispose();
                     return;
             }
@@ -109,7 +109,7 @@ function saveSettings(settings: any) {
 
 function getSettingsHtml(): string {
     const config = vscode.workspace.getConfiguration('blinkBuddy');
-    const reminderInterval = config.get('reminderInterval', 1200);
+    const reminderInterval = config.get('reminderInterval', 5);
     const waterGlassTarget = config.get('waterGlassTarget', 8);
     const customReminders = config.get('customReminders', []);
 
@@ -119,7 +119,7 @@ function getSettingsHtml(): string {
         <head>
             <meta charset="UTF-8">
             <meta name="viewport" content="width=device-width, initial-scale=1.0">
-            <title>Blink Buddy Settings</title>
+            <title>1Minute Break Settings</title>
             <style>
                 body, html {
                     margin: 0;
@@ -199,7 +199,7 @@ function getSettingsHtml(): string {
         </head>
         <body>
             <div class="settings">
-                <h1>Blink Buddy Settings</h1>
+                <h1>1Minute Break Settings</h1>
                 <label for="reminderInterval">Reminder Interval (seconds):</label>
                 <input type="number" id="reminderInterval" value="${reminderInterval}" min="1">
                 
@@ -272,7 +272,7 @@ function showReminderModal(context: vscode.ExtensionContext) {
 
     reminderPanel = vscode.window.createWebviewPanel(
         'blinkBuddyReminder',
-        'Blink Buddy Reminder',
+        '1Minute Break Reminder',
         vscode.ViewColumn.Two,
         {
             enableScripts: true,

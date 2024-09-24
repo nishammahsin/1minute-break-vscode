@@ -1,6 +1,6 @@
 {
-  "name": "blink-buddy",
-  "displayName": "Blink Buddy",
+  "name": "1minute-break",
+  "displayName": "1Minute Break",
   "description": "Your eye care coding companion",
   "version": "0.0.1",
   "engines": {
@@ -17,19 +17,19 @@
     "commands": [
       {
         "command": "blink-buddy.startReminder",
-        "title": "Start Blink Buddy"
+        "title": "Start 1Minute Break"
       },
       {
         "command": "blink-buddy.stopReminder",
-        "title": "Stop Blink Buddy"
+        "title": "Stop 1Minute Break"
       },
       {
         "command": "blink-buddy.openSettings",
-        "title": "Open Blink Buddy Settings"
+        "title": "Open 1Minute Break Settings"
       }
     ],
     "configuration": {
-      "title": "Blink Buddy",
+      "title": "1Minute Break",
       "properties": {
         "blinkBuddy.reminderInterval": {
           "type": "number",
