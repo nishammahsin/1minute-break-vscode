@@ -36,18 +36,17 @@ function startExtension(context: vscode.ExtensionContext): void {
 
     const config = vscode.workspace.getConfiguration('blinkBuddy');
     const intervalInSeconds = config.get<number>('reminderInterval', 1200);
-    const pauseDurationInSeconds = config.get<number>('pauseDuration', 20);
 
-    console.log(`Starting extension with interval: ${intervalInSeconds}s, pause duration: ${pauseDurationInSeconds}s`);
+    console.log(`Starting extension with interval: ${intervalInSeconds}s`);
 
     intervalId = setInterval(() => {
         console.log('Interval triggered');
         if (!reminderPanel) {
-            showReminderModal(pauseDurationInSeconds, context);
+            showReminderModal(context);
         }
     }, intervalInSeconds * 1000);
 
-    vscode.window.showInformationMessage(`Blink Buddy: Started with interval ${intervalInSeconds}s and pause ${pauseDurationInSeconds}s.`);
+    vscode.window.showInformationMessage(`Blink Buddy: Started with interval ${intervalInSeconds}s.`);
 }
 
 function stopExtension(): void {
@@ -260,7 +259,7 @@ function getSettingsHtml(): string {
     `;
 }
 
-function showReminderModal(duration: number, context: vscode.ExtensionContext) {
+function showReminderModal(context: vscode.ExtensionContext) {
     if (reminderPanel) {
         reminderPanel.dispose();
     }
@@ -275,7 +274,7 @@ function showReminderModal(duration: number, context: vscode.ExtensionContext) {
         }
     );
 
-    reminderPanel.webview.html = getReminderHtml(duration);
+    reminderPanel.webview.html = getReminderHtml();
 
     reminderPanel.webview.onDidReceiveMessage(
         message => {
@@ -309,7 +308,7 @@ export function deactivate() {
     }
 }
 
-function getReminderHtml(duration: number): string {
+function getReminderHtml(): string {
     const config = vscode.workspace.getConfiguration('blinkBuddy');
     const customReminders = config.get('customReminders', []);
 
@@ -606,7 +605,7 @@ function getReminderHtml(duration: number): string {
                 
                 ${customReminders.length > 0 ? `
                     <div class="custom-reminders">
-                        <h2 class="custom-reminders-heading">Your Personal Reminders</h2>
+                        <h2 class="custom-reminders-heading">Custom Reminders</h2>
                         <ul>
                             ${customReminders.map((reminder: any) => `
                                 <li class="custom-reminder">${reminder.message}</li>
