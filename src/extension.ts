@@ -111,7 +111,6 @@ function saveSettings(settings: any) {
 function getSettingsHtml(): string {
     const config = vscode.workspace.getConfiguration('blinkBuddy');
     const reminderInterval = config.get('reminderInterval', 1200);
-    const pauseDuration = config.get('pauseDuration', 20);
     const customReminders = config.get('customReminders', []);
 
     return `
@@ -204,16 +203,12 @@ function getSettingsHtml(): string {
                 <label for="reminderInterval">Reminder Interval (seconds):</label>
                 <input type="number" id="reminderInterval" value="${reminderInterval}" min="1">
                 
-                <label for="pauseDuration">Break Duration (seconds):</label>
-                <input type="number" id="pauseDuration" value="${pauseDuration}" min="1">
-                
                 <div class="custom-reminders">
                     <h2>Custom Reminders</h2>
                     <div id="customRemindersList">
                         ${customReminders.map((reminder: any, index: number) => `
                             <div class="custom-reminder">
                                 <input type="text" class="reminderMessage" value="${reminder.message}" placeholder="Message">
-                                <input type="number" class="reminderInterval" value="${reminder.interval}" placeholder="Interval (sec)">
                                 <button onclick="removeReminder(${index})">Remove</button>
                             </div>
                         `).join('')}
@@ -233,7 +228,6 @@ function getSettingsHtml(): string {
                     newReminder.className = 'custom-reminder';
                     newReminder.innerHTML = \`
                         <input type="text" class="reminderMessage" placeholder="Message">
-                        <input type="number" class="reminderInterval" placeholder="Interval (sec)">
                         <button onclick="this.parentElement.remove()">Remove</button>
                     \`;
                     customRemindersList.appendChild(newReminder);
@@ -248,17 +242,14 @@ function getSettingsHtml(): string {
 
                 function saveSettings() {
                     const reminderInterval = document.getElementById('reminderInterval').value;
-                    const pauseDuration = document.getElementById('pauseDuration').value;
                     const customReminders = Array.from(document.getElementById('customRemindersList').children).map(reminder => ({
                         message: reminder.querySelector('.reminderMessage').value,
-                        interval: parseInt(reminder.querySelector('.reminderInterval').value)
                     }));
 
                     vscode.postMessage({
                         command: 'saveSettings',
                         settings: {
                             reminderInterval: parseInt(reminderInterval),
-                            pauseDuration: parseInt(pauseDuration),
                             customReminders
                         }
                     });
