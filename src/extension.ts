@@ -101,8 +101,8 @@ function saveSettings(settings: any) {
     const config = vscode.workspace.getConfiguration('blinkBuddy');
     config.update('reminderInterval', settings.reminderInterval, vscode.ConfigurationTarget.Global)
         .then(() => console.log('Reminder interval updated'));
-    config.update('pauseDuration', settings.pauseDuration, vscode.ConfigurationTarget.Global)
-        .then(() => console.log('Pause duration updated'));
+    config.update('waterGlassTarget', settings.waterGlassTarget, vscode.ConfigurationTarget.Global)
+        .then(() => console.log('Water glass target updated to:', settings.waterGlassTarget));
     config.update('customReminders', settings.customReminders, vscode.ConfigurationTarget.Global)
         .then(() => console.log('Custom reminders updated'));
 }
@@ -110,6 +110,7 @@ function saveSettings(settings: any) {
 function getSettingsHtml(): string {
     const config = vscode.workspace.getConfiguration('blinkBuddy');
     const reminderInterval = config.get('reminderInterval', 1200);
+    const waterGlassTarget = config.get('waterGlassTarget', 8);
     const customReminders = config.get('customReminders', []);
 
     return `
@@ -202,6 +203,9 @@ function getSettingsHtml(): string {
                 <label for="reminderInterval">Reminder Interval (seconds):</label>
                 <input type="number" id="reminderInterval" value="${reminderInterval}" min="1">
                 
+                <label for="waterGlassTarget">Daily Water Glass Target:</label>
+                <input type="number" id="waterGlassTarget" value="${waterGlassTarget}" min="1" max="20">
+                
                 <div class="custom-reminders">
                     <h2>Custom Reminders</h2>
                     <div id="customRemindersList">
@@ -241,6 +245,7 @@ function getSettingsHtml(): string {
 
                 function saveSettings() {
                     const reminderInterval = document.getElementById('reminderInterval').value;
+                    const waterGlassTarget = document.getElementById('waterGlassTarget').value;
                     const customReminders = Array.from(document.getElementById('customRemindersList').children).map(reminder => ({
                         message: reminder.querySelector('.reminderMessage').value,
                     }));
@@ -249,6 +254,7 @@ function getSettingsHtml(): string {
                         command: 'saveSettings',
                         settings: {
                             reminderInterval: parseInt(reminderInterval),
+                            waterGlassTarget: parseInt(waterGlassTarget),
                             customReminders
                         }
                     });
@@ -311,6 +317,8 @@ export function deactivate() {
 function getReminderHtml(): string {
     const config = vscode.workspace.getConfiguration('blinkBuddy');
     const customReminders = config.get('customReminders', []);
+    const waterGlassTarget = config.get('waterGlassTarget', 8);
+    console.log('Using water glass target:', waterGlassTarget);
 
     return `
         <!DOCTYPE html>
@@ -605,7 +613,7 @@ function getReminderHtml(): string {
                 
                 ${customReminders.length > 0 ? `
                     <div class="custom-reminders">
-                        <h2 class="custom-reminders-heading">Custom Reminders</h2>
+                        <h2 class="custom-reminders-heading">Your Personal Reminders</h2>
                         <ul>
                             ${customReminders.map((reminder: any) => `
                                 <li class="custom-reminder">${reminder.message}</li>
@@ -619,7 +627,7 @@ function getReminderHtml(): string {
                 <div class="water-tracker">
                     <h2 class="section-heading">Stay Hydrated!</h2>
                     <div class="water-glasses">
-                        ${Array(8).fill(null).map((_, i) => `
+                        ${Array(waterGlassTarget).fill(null).map((_, i) => `
                             <svg class="water-glass" data-index="${i}" width="30" height="40" viewBox="0 0 64.002 64.002" xmlns="http://www.w3.org/2000/svg">
                                 <g transform="translate(10.878 4.295)">
                                     <path d="M1.66,1.657,6.351,54.409H35.668L40.359,1.657H1.66M1.66-.6h38.7a2.254,2.254,0,0,1,2.248,2.452L37.916,54.609a2.255,2.255,0,0,1-2.248,2.054H6.351A2.255,2.255,0,0,1,4.1,54.609L-.587,1.856A2.254,2.254,0,0,1,1.66-.6Z" transform="translate(0.596 0.596)" fill="#000"/>
@@ -630,7 +638,7 @@ function getReminderHtml(): string {
                             </svg>
                         `).join('')}
                     </div>
-                    <p>Tap a glass to log your water intake. Aim for 8 glasses a day!</p>
+                    <p>Tap a glass to log your water intake. Aim for ${waterGlassTarget} glasses a day!</p>
                 </div>
                 <p id="motivationalMessage">Stay hydrated, stay focused!</p>
                 <button class="back-to-work">Back to Work</button>

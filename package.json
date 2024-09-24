@@ -33,31 +33,18 @@
       "properties": {
         "blinkBuddy.reminderInterval": {
           "type": "number",
-          "default": 5,
-          "description": "Interval between reminders in seconds (for testing)"
+          "default": 1200,
+          "description": "Reminder Interval (seconds)"
         },
-        "blinkBuddy.pauseDuration": {
+        "blinkBuddy.waterGlassTarget": {
           "type": "number",
-          "default": 5,
-          "description": "Duration of break in seconds"
+          "default": 8,
+          "description": "Daily Water Glass Target"
         },
         "blinkBuddy.customReminders": {
           "type": "array",
           "default": [],
-          "description": "Custom reminders",
-          "items": {
-            "type": "object",
-            "properties": {
-              "message": {
-                "type": "string",
-                "description": "Reminder message"
-              },
-              "interval": {
-                "type": "number",
-                "description": "Interval in seconds"
-              }
-            }
-          }
+          "description": "Custom Reminders"
         }
       }
     }
