@@ -33,7 +33,7 @@
       "properties": {
         "blinkBuddy.reminderInterval": {
           "type": "number",
-          "default": 1200,
+          "default": 20,
           "description": "Reminder Interval (seconds)"
         },
         "blinkBuddy.waterGlassTarget": {

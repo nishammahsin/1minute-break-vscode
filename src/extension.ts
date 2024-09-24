@@ -44,9 +44,9 @@ function startExtension(context: vscode.ExtensionContext): void {
         if (!reminderPanel) {
             showReminderModal(context);
         }
-    }, intervalInSeconds * 1000);
+    }, intervalInSeconds * 60* 1000);
 
-    vscode.window.showInformationMessage(`1Minute Break: Started with interval ${intervalInSeconds}s.`);
+    vscode.window.showInformationMessage(`1Minute Break: Take a short break after ${intervalInSeconds} Minutes.`);
 }
 
 function stopExtension(): void {
@@ -109,7 +109,7 @@ function saveSettings(settings: any) {
 
 function getSettingsHtml(): string {
     const config = vscode.workspace.getConfiguration('blinkBuddy');
-    const reminderInterval = config.get('reminderInterval', 5);
+    const reminderInterval = config.get('reminderInterval', 20);
     const waterGlassTarget = config.get('waterGlassTarget', 8);
     const customReminders = config.get('customReminders', []);
 
@@ -200,7 +200,7 @@ function getSettingsHtml(): string {
         <body>
             <div class="settings">
                 <h1>1Minute Break Settings</h1>
-                <label for="reminderInterval">Reminder Interval (seconds):</label>
+                <label for="reminderInterval">Reminder Interval (minutes):</label>
                 <input type="number" id="reminderInterval" value="${reminderInterval}" min="1">
                 
                 <label for="waterGlassTarget">Daily Water Glass Target:</label>
