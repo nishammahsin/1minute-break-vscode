@@ -319,6 +319,9 @@ export function deactivate() {
 }
 
 function getReminderHtml(duration: number): string {
+    const config = vscode.workspace.getConfiguration('blinkBuddy');
+    const customReminders = config.get('customReminders', []);
+
     return `
         <!DOCTYPE html>
         <html lang="en">
@@ -547,6 +550,33 @@ function getReminderHtml(duration: number): string {
                 .water-glass.filled path {
                     fill: #2196F3;
                 }
+                .section-heading {
+                    font-size: 18px;
+                    font-weight: bold;
+                    color: #2c3e50;
+                    margin-top: 1rem;
+                    margin-bottom: 0.5rem;
+                    text-align: center;
+                }
+
+                .custom-reminders {
+                    margin-top: 1rem;
+                    text-align: left;
+                    padding-left: 20px;
+                }
+                .custom-reminders-heading {
+                    font-size: 18px;
+                    color: #2c3e50;
+                    margin-bottom: 0.5rem;
+                    text-align: center;
+                }
+                .custom-reminder {
+                    color: #27ae60;
+                    font-weight: 500;
+                    font-size: 14px;
+                    margin-bottom: 0.25rem;
+                    list-style-type: disc;
+                }
             </style>
         </head>
         <body>
@@ -557,7 +587,7 @@ function getReminderHtml(duration: number): string {
                         <div id="timer">0:00</div>
                     </div>
                 </div>
-                <p class="activity-instruction">Complete all activities for a quick refresh:</p>
+                <h2 class="section-heading">Complete all activities for a quick refresh:</h2>
                 <div class="activities">
                     <div class="activity">
                         <svg class="activity-icon eye-icon" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
@@ -582,9 +612,22 @@ function getReminderHtml(duration: number): string {
                         <p class="activity-instruction">Take a short 30-second walk</p>
                     </div>
                 </div>
+                
+                ${customReminders.length > 0 ? `
+                    <div class="custom-reminders">
+                        <h2 class="custom-reminders-heading">Your Personal Reminders</h2>
+                        <ul>
+                            ${customReminders.map((reminder: any) => `
+                                <li class="custom-reminder">${reminder.message}</li>
+                            `).join('')}
+                        </ul>
+                    </div>
+                ` : ''}
+                
                 <a href="#" class="add-more" id="addMoreActivities">+ Add More Activities and Custom Reminders</a>
+                
                 <div class="water-tracker">
-                    <h2>Stay Hydrated!</h2>
+                    <h2 class="section-heading">Stay Hydrated!</h2>
                     <div class="water-glasses">
                         ${Array(8).fill(null).map((_, i) => `
                             <svg class="water-glass" data-index="${i}" width="30" height="40" viewBox="0 0 64.002 64.002" xmlns="http://www.w3.org/2000/svg">
@@ -610,7 +653,7 @@ function getReminderHtml(duration: number): string {
                 function updateTimer() {
                     const minutes = Math.floor(seconds / 60);
                     const remainingSeconds = seconds % 60;
-                    timerElement.textContent = \`\${minutes}:\${remainingSeconds.toString().padStart(2, '0')}\`;
+                    timerElement.textContent = \`\${minutes.toString().padStart(2, '0')}:\${remainingSeconds.toString().padStart(2, '0')}\`;
                     seconds++;
                     setTimeout(updateTimer, 1000);
                 }
