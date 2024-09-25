@@ -1,71 +1,65 @@
-# blink-buddy README
+# 1Minute Break
 
-This is the README for your extension "blink-buddy". After writing up a brief description, we recommend including the following sections.
+1Minute Break is a VS Code extension designed to help developers maintain a healthy work routine by providing regular reminders for breaks, hydration, and custom activities.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Customizable Break Reminders**: Set reminders at intervals that suit your work style.
+- **Water Intake Tracking**: Keep track of your daily water intake with a visual glass counter.
+- **Custom Reminders**: Add personalized reminders for stretching, eye exercises, or any other activities you want to incorporate into your breaks.
+- **Visual Break Timer**: A countdown timer helps you manage your break time effectively.
 
-For example if there is an image subfolder under your extension project workspace:
+## Installation
 
-\!\[feature X\]\(images/feature-x.png\)
+1. Open Visual Studio Code
+2. Press `Ctrl+P` (or `Cmd+P` on macOS) to open the Quick Open dialog
+3. Type `ext install 1minute-break` and press Enter
+4. Restart VS Code after the installation is complete
 
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+## Usage
 
-## Requirements
+### Starting the Extension
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+1. Open the Command Palette (`Ctrl+Shift+P` or `Cmd+Shift+P` on macOS)
+2. Type "Start 1Minute Break" and select it
 
-## Extension Settings
+### Configuring Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+1. Open the Command Palette
+2. Type "Open 1Minute Break Settings" and select it
+3. Adjust the following settings:
+   - Reminder Interval (in minutes)
+   - Daily Water Glass Target
+   - Custom Reminders
 
-For example:
+### During a Break
 
-This extension contributes the following settings:
+When a break reminder appears:
+1. Complete the suggested activities
+2. Use the water glass tracker to log your water intake
+3. Review and act on your custom reminders
+4. Click "Back to Work" when you're ready to resume coding
 
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+## Configuration
 
-## Known Issues
+You can customize the following settings:
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+- `1minuteBreak.reminderInterval`: Set the interval between breaks (in minutes)
+- `1minuteBreak.waterGlassTarget`: Set your daily water intake goal (number of glasses)
+- `1minuteBreak.customReminders`: Add your own custom reminders
 
-## Release Notes
+## Contributing
 
-Users appreciate release notes as you update your extension.
+We welcome contributions to 1Minute Break! If you have suggestions for improvements or encounter any issues, please open an issue or submit a pull request on our [GitHub repository](https://github.com/yourusername/1minute-break).
 
-### 1.0.0
+## License
 
-Initial release of ...
+This extension is released under the [MIT License](LICENSE).
 
-### 1.0.1
+## Support
 
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
+If you encounter any problems or have any questions, please [open an issue](https://github.com/yourusername/1minute-break/issues) on our GitHub repository.
 
 ---
 
-## Following extension guidelines
-
-Ensure that you've read through the extensions guidelines and follow the best practices for creating your extension.
-
-* [Extension Guidelines](https://code.visualstudio.com/api/references/extension-guidelines)
-
-## Working with Markdown
-
-You can author your README using Visual Studio Code. Here are some useful editor keyboard shortcuts:
-
-* Split the editor (`Cmd+\` on macOS or `Ctrl+\` on Windows and Linux).
-* Toggle preview (`Shift+Cmd+V` on macOS or `Shift+Ctrl+V` on Windows and Linux).
-* Press `Ctrl+Space` (Windows, Linux, macOS) to see a list of Markdown snippets.
-
-## For more information
-
-* [Visual Studio Code's Markdown Support](http://code.visualstudio.com/docs/languages/markdown)
-* [Markdown Syntax Reference](https://help.github.com/articles/markdown-basics/)
-
-**Enjoy!**
+Happy coding, and don't forget to take breaks! 🌟💧🧘‍♀️

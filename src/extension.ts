@@ -211,7 +211,7 @@ function getSettingsHtml(): string {
                     <div id="customRemindersList">
                         ${customReminders.map((reminder: any, index: number) => `
                             <div class="custom-reminder">
-                                <input type="text" class="reminderMessage" value="${reminder.message}" placeholder="Message">
+                                <input type="text" class="reminderMessage" value="${reminder.message}" placeholder="Have a healthy snack.">
                                 <button onclick="removeReminder(${index})">Remove</button>
                             </div>
                         `).join('')}
@@ -230,7 +230,7 @@ function getSettingsHtml(): string {
                     const newReminder = document.createElement('div');
                     newReminder.className = 'custom-reminder';
                     newReminder.innerHTML = \`
-                        <input type="text" class="reminderMessage" placeholder="Message">
+                        <input type="text" class="reminderMessage" placeholder="Have a healthy snack."">
                         <button onclick="this.parentElement.remove()">Remove</button>
                     \`;
                     customRemindersList.appendChild(newReminder);
