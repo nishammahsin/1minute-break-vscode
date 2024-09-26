@@ -1,5 +1,8 @@
 # Changelog
-
+## [1.0.1] - 2024-09-26
+### Added
+- Added an icon to the extension.
+- Included screenshots and GIFs in the README.md to showcase features.
 ## [1.0.0] - 2024-09-25
 
 ### Added
