@@ -1,5 +1,15 @@
-out
-dist
-node_modules
-.vscode-test/
-*.vsix
+.vscode/**
+.vscode-test/**
+src/**
+.gitignore
+.yarnrc
+esbuild.js
+vsc-extension-quickstart.md
+**/tsconfig.json
+**/eslint.config.mjs
+**/*.map
+**/*.ts
+**/.vscode-test.*
+node_modules/**
+# Remove or comment out the following line if it exists
+# out/**

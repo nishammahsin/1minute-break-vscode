@@ -1,6 +1,9 @@
 # 1Minute Break
 
 1Minute Break is a VS Code extension designed to help developers maintain a healthy work routine by providing regular reminders for breaks, hydration, and custom activities.
+![Break Reminder](assets/1.png)
+
+![Settings](assets/2.png)
 
 ## Features
 
@@ -40,17 +43,10 @@ When a break reminder appears:
 3. Review and act on your custom reminders
 4. Click "Back to Work" when you're ready to resume coding
 
-## Configuration
-
-You can customize the following settings:
-
-- `1minuteBreak.reminderInterval`: Set the interval between breaks (in minutes)
-- `1minuteBreak.waterGlassTarget`: Set your daily water intake goal (number of glasses)
-- `1minuteBreak.customReminders`: Add your own custom reminders
 
 ## Contributing
 
-We welcome contributions to 1Minute Break! If you have suggestions for improvements or encounter any issues, please open an issue or submit a pull request on our [GitHub repository](https://github.com/yourusername/1minute-break).
+We welcome contributions to 1Minute Break! If you have suggestions for improvements or encounter any issues, please open an issue or submit a pull request on our [GitHub repository](https://github.com/nishammahsin/1minute-break-vscode.git).
 
 ## License
 
@@ -58,7 +54,7 @@ This extension is released under the [MIT License](LICENSE).
 
 ## Support
 
-If you encounter any problems or have any questions, please [open an issue](https://github.com/yourusername/1minute-break/issues) on our GitHub repository.
+If you encounter any problems or have any questions, please [open an issue](https://github.com/nishammahsin/1minute-break-vscode/issues) on our GitHub repository.
 
 ---
 

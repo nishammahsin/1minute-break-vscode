@@ -3,6 +3,7 @@
   "displayName": "1Minute Break",
   "description": "Reminds you to take short breaks and stay hydrated",
   "version": "1.0.0",
+  "icon": "icon.png",
   "engines": {
     "vscode": "^1.60.0"
   },
@@ -12,7 +13,7 @@
   "activationEvents": [
     "onStartupFinished"
   ],
-  "main": "./out/extension.js",
+  "main": "./extension/out/extension.js",
   "contributes": {
     "commands": [
       {
@@ -51,14 +52,14 @@
   },
   "scripts": {
     "vscode:prepublish": "npm run compile",
-    "compile": "tsc -p ./",
+    "compile": "tsc -p ./ && mkdir -p extension/out && cp -R out/* extension/out/",
     "watch": "tsc -watch -p ./",
     "pretest": "npm run compile && npm run lint",
     "lint": "eslint src --ext ts",
     "test": "node ./out/test/runTest.js"
   },
   "devDependencies": {
-    "@types/vscode": "^1.93.0",
+    "@types/vscode": "^1.60.0",
     "@types/mocha": "^10.0.7",
     "@types/node": "20.x",
     "@typescript-eslint/eslint-plugin": "^8.3.0",
@@ -70,7 +71,7 @@
     "@vscode/test-cli": "^0.0.10",
     "@vscode/test-electron": "^2.4.1"
   },
-  "publisher": "YourPublisherName",
+  "publisher": "1minute-break",
   "repository": {
     "type": "git",
     "url": "https://github.com/nishammahsin/1minute-break-vscode.git"
