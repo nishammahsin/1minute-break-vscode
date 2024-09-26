@@ -1,8 +1,8 @@
 {
   "name": "1minute-break",
   "displayName": "1Minute Break",
-  "description": "Your eye care coding companion",
-  "version": "0.0.1",
+  "description": "Reminds you to take short breaks and stay hydrated",
+  "version": "1.0.0",
   "engines": {
     "vscode": "^1.60.0"
   },
@@ -10,7 +10,7 @@
     "Other"
   ],
   "activationEvents": [
-    "*"
+    "onStartupFinished"
   ],
   "main": "./out/extension.js",
   "contributes": {
@@ -34,7 +34,7 @@
         "blinkBuddy.reminderInterval": {
           "type": "number",
           "default": 20,
-          "description": "Reminder Interval (seconds)"
+          "description": "Reminder Interval (minutes)"
         },
         "blinkBuddy.waterGlassTarget": {
           "type": "number",
